@@ -12,8 +12,7 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     nnod = int(Nnod)
     tnod = int(Tnod)
     xw = np.arange(a, b+1/(nnod-1), 1/(nnod-1))
-    tw = np.linspace(t0, t1, tnod-1)
-    # tw = np.arange(t0, t1+1/(tnod-1), 1/(tnod-1))
+    tw = np.arange(t0, t1+1/(tnod-1), 1/(tnod-1))
     h = xw[1] - xw[0]
     tau = tw[1] - tw[0]
 
@@ -31,7 +30,7 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     Aright = sparse.eye(nnod) - tau * (1 - sigma) * Ah
     Aleft = sparse.eye(nnod) + tau * sigma * Ah
 
-    if sigma == IMPLIZITE_EULER or sigma == CRANK_NOCOLSON:
+    if sigma == IMPLIZITE_EULER or sigma == CRANK_NICOLSON:
         Aright[0, 0], Aright[0, 1] = 1, 0
         Aright[-1, -1], Aright[-1, -2] = 1, 0
         Aleft[0, 0], Aleft[0, 1] = 1, 0
@@ -39,15 +38,14 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
 
     uw = np.zeros((tnod, nnod), dtype=float)
     uw[0,:] = phi(xw)
-    # ThomasAlg_Mat( A, d )
     for j in range(1, tnod):
         uOld = uw[j-1,:]
-        quell = sigma * f(xw, t[j]) + (1-sigma) * f(xw, t[j-1])
+        quell = sigma * f(xw, tw[j]) + (1-sigma) * f(xw, tw[j-1])
         rhs = Aright + tau*quell
-        if sigma == IMPLIZITE_EULER or sigma == CRANK_NOCOLSON:
-            rhs[0], rhs[-1] = mu_a(t[j]), mu_b(t[j])
-        uNew = ta.ThomasAlg_mat(Aleft, rhs)
+        if sigma == IMPLIZITE_EULER or sigma == CRANK_NICOLSON:
+            rhs[0], rhs[-1] = mu_a(tw[j]), mu_b(tw[j])
+        uNew = ta.ThomasAlg_Mat(Aleft, rhs)
         if sigme == EXPLIZITE_EULER:
-            uNew[0], uNew[-1] = mu_a(t[j]), mu_b(t[j])
+            uNew[0], uNew[-1] = mu_a(tw[j]), mu_b(tw[j])
         uw[j,:] = uNew
     return uw, xw, tw
