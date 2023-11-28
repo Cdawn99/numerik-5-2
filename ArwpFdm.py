@@ -1,7 +1,6 @@
 import ThomasAlg as ta
 import numpy as np
 from scipy import sparse
-from scipy.sparse.linalg import spsolve
 
 def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     EXPLIZITE_EULER = 0
@@ -21,7 +20,6 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     main_diag = np.ones(nnod, dtype=float)
     low_diag = np.ones(nnod, dtype=float)
     up_diag = np.ones(nnod, dtype=float)
-    fh = np.ones(nnod, dtype=float)
 
     low_diag *= -k(xw - h/2) / h**2 - r(xw) / (2*h)
     up_diag *= r(xw) / (2*h) - k(xw + h/2) / h**2
