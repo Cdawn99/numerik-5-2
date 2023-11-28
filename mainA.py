@@ -1,6 +1,12 @@
+import ArwpFdm as FDM
 import numpy as np
 import matplotlib.pyplot as plt
-import ArwpFdm as FDM
+import sys
+
+if len(sys.argv) != 2:
+    print(f'Usage: {sys.argv[0]} <Method>')
+    print("Method can be one of: explicit, implicit, nicolson")
+    sys.exit()
 
 a, b = 0, 1
 tend = 1
@@ -19,17 +25,21 @@ rba = lambda t: 0
 rbb = lambda t: np.cos(t) * np.sin(b)
 phi = lambda x: np.sin(x)
 
-# Explizit Euler
-sigma = 0
-tau = h*h/2
-
-# Implizit Euler
-# sigma = 1
-# tau = h*h
-
-# Crank-Nicolson
-# sigma = 1/2
-# tau = h
+if sys.argv[1] == "explicit":
+    # Explizit Euler
+    sigma = 0
+    tau = h*h/2
+elif sys.argv[1] == "implicit":
+    # Implizit Euler
+    sigma = 1
+    tau = h*h
+elif sys.argv[1] == "nicolson":
+    # Crank-Nicolson
+    sigma = 1/2
+    tau = h
+else:
+    print("Invalid method! Must be one of: explicit, implicit, nicolson")
+    sys.exit()
 
 M = round(tend/tau)
 zeit = np.array([0, tend, M+1])
