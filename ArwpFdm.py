@@ -41,11 +41,11 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     for j in range(1, tnod):
         uOld = uw[j-1,:]
         quell = sigma * f(xw, tw[j]) + (1-sigma) * f(xw, tw[j-1])
-        rhs = Aright + tau*quell
+        rhs = Aright*uOld + tau*quell
         if sigma == IMPLIZITE_EULER or sigma == CRANK_NICOLSON:
             rhs[0], rhs[-1] = mu_a(tw[j]), mu_b(tw[j])
         uNew = ta.ThomasAlg_Mat(Aleft, rhs)
-        if sigme == EXPLIZITE_EULER:
+        if sigma == EXPLIZITE_EULER:
             uNew[0], uNew[-1] = mu_a(tw[j]), mu_b(tw[j])
         uw[j,:] = uNew
     return uw, xw, tw

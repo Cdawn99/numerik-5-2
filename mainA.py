@@ -8,7 +8,7 @@ Nnod = 10+1
 ort = np.array([a, b, Nnod])
 h = (b-a)/(Nnod-1)
 
-exa = lambda x,t: np.sin(x) * np.cos(x)
+exa = lambda x,t: np.sin(x) * np.cos(t)
 
 kco = lambda x: 1
 qco = lambda x: 1
