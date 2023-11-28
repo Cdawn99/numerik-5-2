@@ -7,10 +7,12 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     EXPLIZITE_EULER = 0
     IMPLIZITE_EULER = 1
     CRANK_NICOLSON = 1/2
+
     a, b, Nnod = np.split(ort, 3)
     t0, t1, Tnod = np.split(zeit, 3)
     nnod = int(Nnod)
     tnod = int(Tnod)
+
     xw = np.arange(a, b+1/(nnod-1), 1/(nnod-1))
     tw = np.arange(t0, t1+1/(tnod-1), 1/(tnod-1))
     h = xw[1] - xw[0]
@@ -21,8 +23,8 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     up_diag = np.ones(nnod, dtype=float)
     fh = np.ones(nnod, dtype=float)
 
-    low_diag *= -k(xw[1:] - h/2) / h**2 - r(xw[1:]) / (2*h)
-    up_diag *= r(xw[:nnod-1]) / (2*h) - k(xw[:nnod-1] + h/2) / h**2
+    low_diag *= -k(xw - h/2) / h**2 - r(xw) / (2*h)
+    up_diag *= r(xw) / (2*h) - k(xw + h/2) / h**2
     main_diag = k(xw + h/2)/h**2 + k(xw - h/2)/h**2 + q(xw)
 
     diags = [-1, 0, 1]
@@ -39,7 +41,7 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     uw = np.zeros((tnod, nnod), dtype=float)
     uw[0,:] = phi(xw)
     for j in range(1, tnod):
-        uOld = uw[j-1,:]
+        uOld = uw[j-1]
         quell = sigma * f(xw, tw[j]) + (1-sigma) * f(xw, tw[j-1])
         rhs = Aright*uOld + tau*quell
         if sigma == IMPLIZITE_EULER or sigma == CRANK_NICOLSON:
