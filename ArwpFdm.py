@@ -8,13 +8,13 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     IMPLIZITE_EULER = 1
     CRANK_NICOLSON = 1/2
 
-    a, b, Nnod = np.split(ort, 3)
-    t0, t1, Tnod = np.split(zeit, 3)
+    a, b, Nnod = ort
+    t0, t1, Tnod = zeit
     nnod = int(Nnod)
     tnod = int(Tnod)
 
-    xw = np.arange(a, b+1/(nnod-1), 1/(nnod-1))
-    tw = np.arange(t0, t1+1/(tnod-1), 1/(tnod-1))
+    xw = np.linspace(a, b, nnod)
+    tw = np.linspace(t0, t1, tnod)
     h = xw[1] - xw[0]
     tau = tw[1] - tw[0]
 
