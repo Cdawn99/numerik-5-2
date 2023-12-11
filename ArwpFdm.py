@@ -2,6 +2,7 @@ import ThomasAlg as ta
 import numpy as np
 from scipy import sparse
 
+
 def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     EXPLIZITE_EULER = 0
     IMPLIZITE_EULER = 1
@@ -26,7 +27,8 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
     main_diag = k(xw + h/2)/h**2 + k(xw - h/2)/h**2 + q(xw)
 
     diags = [-1, 0, 1]
-    Ah = sparse.diags([low_diag[1:], main_diag, up_diag[:nnod-1]], diags, shape=(nnod, nnod), format="csr")
+    Ah = sparse.diags([low_diag[1:], main_diag, up_diag[:nnod-1]],
+                      diags, shape=(nnod, nnod), format="csr")
     Aright = sparse.eye(nnod) - tau * (1 - sigma) * Ah
     Aleft = sparse.eye(nnod) + tau * sigma * Ah
 
@@ -37,7 +39,7 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
         Aleft[-1, -1], Aleft[-1, -2] = 1, 0
 
     uw = np.zeros((tnod, nnod), dtype=float)
-    uw[0,:] = phi(xw)
+    uw[0, :] = phi(xw)
     for j in range(1, tnod):
         uOld = uw[j-1]
         quell = sigma * f(xw, tw[j]) + (1-sigma) * f(xw, tw[j-1])
@@ -47,5 +49,5 @@ def ArwpFdm1d(ort, zeit, k, r, q, f, mu_a, mu_b, phi, sigma):
         uNew = ta.ThomasAlg_Mat(Aleft, rhs)
         if sigma == EXPLIZITE_EULER:
             uNew[0], uNew[-1] = mu_a(tw[j]), mu_b(tw[j])
-        uw[j,:] = uNew
+        uw[j, :] = uNew
     return uw, xw, tw

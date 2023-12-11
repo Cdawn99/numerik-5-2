@@ -14,16 +14,25 @@ Nnod = 10+1
 ort = np.array([a, b, Nnod])
 h = (b-a)/(Nnod-1)
 
-exa = lambda x,t: np.exp(-2*t) * np.cos(np.pi*x)
 
-kco = lambda x: 1 + 2*x*x
-qco = lambda x: 2 + x*(1-x)
-rco = lambda x: x - 1/2
-fco = lambda x,t: np.exp(-2*t) * (np.cos(np.pi*x) * (2*np.pi*np.pi*x*x - x*x + x + np.pi*np.pi) + 3*np.pi*np.sin(np.pi*x)*(x+1/6))
+def exa(x, t): return np.exp(-2*t) * np.cos(np.pi*x)
 
-rba = lambda t: np.exp(-2*t)
-rbb = lambda t: -np.exp(-2*t)
-phi = lambda x: np.cos(np.pi*x)
+
+def kco(x): return 1 + 2*x*x
+def qco(x): return 2 + x*(1-x)
+def rco(x): return x - 1/2
+
+
+def fco(x, t):
+    return np.exp(-2*t) * (np.cos(np.pi*x)
+                           * (2*np.pi*np.pi*x*x - x*x + x + np.pi*np.pi)
+                           + 3*np.pi*np.sin(np.pi*x)*(x+1/6))
+
+
+def rba(t): return np.exp(-2*t)
+def rbb(t): return -np.exp(-2*t)
+def phi(x): return np.cos(np.pi*x)
+
 
 if sys.argv[1] == "explicit":
     # Explizit Euler
@@ -49,7 +58,7 @@ uw, xw, tw = FDM.ArwpFdm1d(ort, zeit, kco, rco, qco, fco, rba, rbb, phi, sigma)
 uexa = -uw.copy()
 for j in range(0, len(tw)):
     exat = exa(xw, tw[j])
-    uexa[j,:] = exat
+    uexa[j, :] = exat
 print(f'sigma={sigma}, h={h}, tau={tau}, MaxF={np.max(abs(uw-uexa))}')
 
 Xw, Tw = np.meshgrid(xw, tw)

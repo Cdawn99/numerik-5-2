@@ -14,16 +14,20 @@ Nnod = 10+1
 ort = np.array([a, b, Nnod])
 h = (b-a)/(Nnod-1)
 
-exa = lambda x,t: np.sin(x) * np.cos(t)
 
-kco = lambda x: 1
-qco = lambda x: 1
-rco = lambda x: 1
-fco = lambda x,t: (np.cos(x) + 2*np.sin(x)) * np.cos(t) - np.sin(t) * np.sin(x)
+def exa(x, t): return np.sin(x) * np.cos(t)
 
-rba = lambda t: 0
-rbb = lambda t: np.cos(t) * np.sin(b)
-phi = lambda x: np.sin(x)
+
+def kco(x): return 1
+def qco(x): return 1
+def rco(x): return 1
+def fco(x, t): return (np.cos(x)+2*np.sin(x))*np.cos(t)-np.sin(t)*np.sin(x)
+
+
+def rba(t): return 0
+def rbb(t): return np.cos(t) * np.sin(b)
+def phi(x): return np.sin(x)
+
 
 if sys.argv[1] == "explicit":
     # Explizit Euler
@@ -49,7 +53,7 @@ uw, xw, tw = FDM.ArwpFdm1d(ort, zeit, kco, rco, qco, fco, rba, rbb, phi, sigma)
 uexa = -uw.copy()
 for j in range(0, len(tw)):
     exat = exa(xw, tw[j])
-    uexa[j,:] = exat
+    uexa[j, :] = exat
 print(f'sigma={sigma}, h={h}, tau={tau}, MaxF={np.max(abs(uw-uexa))}')
 
 Xw, Tw = np.meshgrid(xw, tw)
